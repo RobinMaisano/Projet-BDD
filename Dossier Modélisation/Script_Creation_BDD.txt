@@ -1,0 +1,194 @@
+DROP TABLE IF EXISTS `Potions`;
+DROP TABLE IF EXISTS `Onguents`;
+DROP TABLE IF EXISTS `Ingredients`;
+DROP TABLE IF EXISTS `Recipients`;
+DROP TABLE IF EXISTS `Inventeurs`;
+DROP TABLE IF EXISTS `Clients`;
+DROP TABLE IF EXISTS `Fournisseurs`;
+DROP TABLE IF EXISTS `Nouvelles_Recettes`;
+DROP TABLE IF EXISTS `Commandes`;
+DROP TABLE IF EXISTS `Recettes_Potions`;
+DROP TABLE IF EXISTS `Recettes_Onguents`;
+DROP TABLE IF EXISTS `Stock_Ingredients`;
+DROP TABLE IF EXISTS `Stock_Recipients`;
+
+
+
+CREATE TABLE Potions 
+(
+ID_Potion INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Potion VARCHAR(100),
+Prix_Potion INT NOT NULL
+);
+
+CREATE TABLE Onguents 
+(
+ID_Onguent INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Onguent VARCHAR(100), 
+Prix_Onguent INT NOT NULL
+);
+
+CREATE TABLE Ingredients 
+(
+ID_Ingredient INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Ingredient VARCHAR(100), 
+Prix_Ingredient INT NOT NULL
+);
+
+CREATE TABLE Recipients 
+(
+ID_Recipient INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Recipient VARCHAR(100), 
+Prix_Recipient INT NOT NULL
+);
+
+CREATE TABLE Inventeurs 
+(
+Nom_Inventeur VARCHAR(100) PRIMARY KEY, 
+Nom_Recette VARCHAR(100)
+);
+
+CREATE TABLE Clients
+(
+N_Client INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Client VARCHAR(100), 
+Prenom_Client VARCHAR(100), 
+Adresse_Client VARCHAR(100),  
+Telephone_Client INT(10)
+);
+
+CREATE TABLE Fournisseurs 
+(
+ID_Fournisseur INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Fournisseur VARCHAR(100),  
+Telephone_Fournisseur INT(10)
+);
+
+CREATE TABLE Nouvelles_Recettes 
+(
+ID_Recette INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Recette VARCHAR(100), 
+Type_Recette VARCHAR(10), 
+Ingredient_Recette VARCHAR(100), 
+Prix_Ingredient_Recette INT NOT NULL, 
+Seuil INT, 
+Quantite_Recette INT, 
+Diluant VARCHAR(100), 
+Prix_Diluant INT NOT NULL, 
+Temperature INT, 
+Prix_Total_Produit INT NOT NULL, 
+Nom_Inventeur VARCHAR(100)
+);
+
+CREATE TABLE Commandes 
+(ID_Commande INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+N_Client INT NOT NULL,
+Date_Commande DATE, 
+Produit_Commande VARCHAR (100), 
+Recipient_Commande VARCHAR (100), 
+Nb_Exemplares_Commande INT, 
+Prix_Produit INT NOT NULL, 
+Etat_Commande VARCHAR (20)
+);
+
+
+
+
+CREATE TABLE Recettes_Potions
+(
+ID_Potion INT NOT NULL, 
+Nom_Inventeur VARCHAR (100), 
+Nom_Potion VARCHAR (100), 
+Ingredient_Recette VARCHAR (100), 
+Prix_Ingredient_Recette INT NOT NULL, 
+Seuil INT, 
+Quantite INT, 
+Diluant VARCHAR (100), 
+Prix_Diluant INT NOT NULL, 
+Temperature INT, 
+Prix_Total_Produit INT NOT NULL
+);
+
+CREATE TABLE Recettes_Onguents
+(
+ID_Onguent INT NOT NULL, 
+Nom_Inventeur VARCHAR (100), 
+Nom_Onguent VARCHAR (100), 
+Ingredient_Recette VARCHAR (100), 
+Prix_Ingredient_Recette INT NOT NULL, 
+Seuil INT, 
+Quantite INT, 
+Prix_Total_Produit INT NOT NULL
+);
+
+CREATE TABLE Stock_Ingredients 
+(
+ID_Ingredient INT NOT NULL,
+ID_Fournisseur INT NOT NULL,
+Nom_Ingredient VARCHAR (100), 
+Prix_Ingredient INT NOT NULL, 
+Quantite_Stock INT, 
+Fraicheur INT
+);
+
+
+CREATE TABLE Stock_Recipients
+(
+ID_Recipient INT NOT NULL, 
+Nom_Recipient VARCHAR (100), 
+Prix_Recipient INT NOT NULL, 
+Nombre_En_Stock INT
+);
+
+ALTER TABLE Potions
+ADD FOREIGN KEY (Nom_Potion) REFERENCES Recettes_Potions(Nom_Potion);
+ALTER ID_Potion SET DEFAULT 1;
+
+ALTER TABLE Onguents
+ADD FOREIGN KEY (Nom_Onguent) REFERENCES Recettes_Onguents(Nom_Onguent);
+ALTER ID_Onguent SET DEFAULT 1;
+
+ALTER TABLE Ingredients
+ADD FOREIGN KEY (Nom_Ingredient) REFERENCES Stock_Ingredients(Nom_Ingredient);
+ALTER ID_Ingredient SET DEFAULT 1;
+
+ALTER TABLE Recipients
+ADD FOREIGN KEY (Nom_Recipient) REFERENCES Stock_Recipients(Nom_Recipient);
+ALTER ID_Recipient SET DEFAULT 1;
+
+ALTER TABLE Inventeurs
+ADD FOREIGN KEY (Nom_Recette) REFERENCES Nouvelles_Recettes(Nom_Recette);
+
+ALTER TABLE Nouvelles_Recettes
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
+ALTER ID_Recette SET DEFAULT 1;
+
+ALTER TABLE Commandes
+ADD FOREIGN KEY (N_Client) REFERENCES Clients(N_Client);
+ALTER ID_Commande SET DEFAULT 1;
+
+ALTER TABLE Recettes_Potions
+ADD FOREIGN KEY (ID_Potion) REFERENCES Potions(ID_Potion);
+ALTER TABLE Recettes_Potions
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
+ALTER TABLE Recettes_Potions
+ADD CONSTRAINT Pk_Recettes_Potions PRIMARY KEY (ID_Potion, Nom_Inventeur);
+
+ALTER TABLE Recettes_Onguents
+ADD FOREIGN KEY (ID_Onguent) REFERENCES Onguents(ID_Onguent);
+ALTER TABLE Recettes_Onguents
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
+ALTER TABLE Recettes_Onguents
+ADD CONSTRAINT Pk_Recettes_Onguents PRIMARY KEY (ID_Onguent, Nom_Inventeur);
+
+ALTER TABLE Stock_Ingredients
+ADD FOREIGN KEY (ID_Ingredient) REFERENCES Ingredients(ID_Ingredient);
+ALTER TABLE Stock_Ingredients
+ADD FOREIGN KEY (ID_Fournisseur) REFERENCES Fournisseurs(ID_Fournisseur);
+ALTER TABLE Stock_Ingredients
+ADD CONSTRAINT Pk_Stock_Ingredients PRIMARY KEY (ID_Ingredient, ID_Fournisseur);
+
+ALTER TABLE Stock_Recipients
+ADD FOREIGN KEY (ID_Recipient) REFERENCES Recipients(ID_Recipient);
+ALTER TABLE Stock_Recipients
+ADD CONSTRAINT Pk_ID_Recipient PRIMARY KEY (ID_Recipient);
