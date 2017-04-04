@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS ProjetBDD;
+CREATE DATABASE ProjetBDD CHARACTER SET utf8;
+USE ProjetBDD;
+
 DROP TABLE IF EXISTS `Potions`;
 DROP TABLE IF EXISTS `Onguents`;
 DROP TABLE IF EXISTS `Ingredients`;
@@ -82,13 +86,13 @@ Nom_Inventeur VARCHAR(100)
 
 CREATE TABLE Commandes 
 (ID_Commande INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-N_Client INT NOT NULL,
 Date_Commande DATE, 
 Produit_Commande VARCHAR (100), 
 Recipient_Commande VARCHAR (100), 
 Nb_Exemplares_Commande INT, 
 Prix_Produit INT NOT NULL, 
-Etat_Commande VARCHAR (20)
+Etat_Commande VARCHAR (20), 
+N_Client INT NOT NULL
 );
 
 
@@ -141,54 +145,90 @@ Nombre_En_Stock INT
 );
 
 ALTER TABLE Potions
-ADD FOREIGN KEY (Nom_Potion) REFERENCES Recettes_Potions(Nom_Potion);
-ALTER ID_Potion SET DEFAULT 1;
+ADD FOREIGN KEY (Nom_Potion) REFERENCES Recettes_Potions(Nom_Potion)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Onguents
-ADD FOREIGN KEY (Nom_Onguent) REFERENCES Recettes_Onguents(Nom_Onguent);
-ALTER ID_Onguent SET DEFAULT 1;
+ADD FOREIGN KEY (Nom_Onguent) REFERENCES Recettes_Onguents(Nom_Onguent)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Ingredients
-ADD FOREIGN KEY (Nom_Ingredient) REFERENCES Stock_Ingredients(Nom_Ingredient);
-ALTER ID_Ingredient SET DEFAULT 1;
+ADD FOREIGN KEY (Nom_Ingredient) REFERENCES Stock_Ingredients(Nom_Ingredient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Recipients
-ADD FOREIGN KEY (Nom_Recipient) REFERENCES Stock_Recipients(Nom_Recipient);
-ALTER ID_Recipient SET DEFAULT 1;
+ADD FOREIGN KEY (Nom_Recipient) REFERENCES Stock_Recipients(Nom_Recipient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Inventeurs
-ADD FOREIGN KEY (Nom_Recette) REFERENCES Nouvelles_Recettes(Nom_Recette);
+ADD FOREIGN KEY (Nom_Recette) REFERENCES Nouvelles_Recettes(Nom_Recette)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Nouvelles_Recettes
-ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
-ALTER ID_Recette SET DEFAULT 1;
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Commandes
-ADD FOREIGN KEY (N_Client) REFERENCES Clients(N_Client);
-ALTER ID_Commande SET DEFAULT 1;
+ADD FOREIGN KEY (N_Client) REFERENCES Clients(N_Client)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 
 ALTER TABLE Recettes_Potions
-ADD FOREIGN KEY (ID_Potion) REFERENCES Potions(ID_Potion);
+ADD FOREIGN KEY (ID_Potion) REFERENCES Potions(ID_Potion)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Recettes_Potions
-ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Recettes_Potions
 ADD CONSTRAINT Pk_Recettes_Potions PRIMARY KEY (ID_Potion, Nom_Inventeur);
 
 ALTER TABLE Recettes_Onguents
-ADD FOREIGN KEY (ID_Onguent) REFERENCES Onguents(ID_Onguent);
+ADD FOREIGN KEY (ID_Onguent) REFERENCES Onguents(ID_Onguent)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Recettes_Onguents
-ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur);
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Recettes_Onguents
 ADD CONSTRAINT Pk_Recettes_Onguents PRIMARY KEY (ID_Onguent, Nom_Inventeur);
 
 ALTER TABLE Stock_Ingredients
-ADD FOREIGN KEY (ID_Ingredient) REFERENCES Ingredients(ID_Ingredient);
+ADD FOREIGN KEY (ID_Ingredient) REFERENCES Ingredients(ID_Ingredient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Stock_Ingredients
-ADD FOREIGN KEY (ID_Fournisseur) REFERENCES Fournisseurs(ID_Fournisseur);
+ADD FOREIGN KEY (ID_Fournisseur) REFERENCES Fournisseurs(ID_Fournisseur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Stock_Ingredients
 ADD CONSTRAINT Pk_Stock_Ingredients PRIMARY KEY (ID_Ingredient, ID_Fournisseur);
 
 ALTER TABLE Stock_Recipients
-ADD FOREIGN KEY (ID_Recipient) REFERENCES Recipients(ID_Recipient);
+ADD FOREIGN KEY (ID_Recipient) REFERENCES Recipients(ID_Recipient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
 ALTER TABLE Stock_Recipients
 ADD CONSTRAINT Pk_ID_Recipient PRIMARY KEY (ID_Recipient);
