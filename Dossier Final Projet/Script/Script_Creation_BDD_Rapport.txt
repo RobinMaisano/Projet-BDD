@@ -1,0 +1,884 @@
+-- Script de création de la Base de Données (PENSER A ENLEVER LES FONCTIONS D'APPEL DES FONCTIONS PRESENTES EN FIN DE REQUETES)
+-- Ce script contient également les requêtes à implémenter ainsi que le script de création des comptes utilisateurs
+-- Mot de passe du root : exia
+
+
+
+DROP DATABASE IF EXISTS ProjetBDD;
+CREATE DATABASE ProjetBDD CHARACTER SET utf8;
+USE ProjetBDD;
+
+DROP TABLE IF EXISTS `Potions`;
+DROP TABLE IF EXISTS `Onguents`;
+DROP TABLE IF EXISTS `Ingredients`;
+DROP TABLE IF EXISTS `Recipients`;
+DROP TABLE IF EXISTS `Inventeurs`;
+DROP TABLE IF EXISTS `Clients`;
+DROP TABLE IF EXISTS `Fournisseurs`;
+DROP TABLE IF EXISTS `Nouvelles_Recettes`;
+DROP TABLE IF EXISTS `Commandes`;
+DROP TABLE IF EXISTS `Recettes_Potions`;
+DROP TABLE IF EXISTS `Recettes_Onguents`;
+DROP TABLE IF EXISTS `Stock_Ingredients`;
+DROP TABLE IF EXISTS `Stock_Recipients`;
+
+
+
+CREATE TABLE Potions 
+(
+ID_Potion INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Potion VARCHAR(100),
+Prix_Potion INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Onguents 
+(
+ID_Onguent INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Onguent VARCHAR(100), 
+Prix_Onguent INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Ingredients 
+(
+ID_Ingredient INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Ingredient VARCHAR(100), 
+Prix_Ingredient INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Recipients 
+(
+ID_Recipient INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Recipient VARCHAR(100), 
+Prix_Recipient INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Inventeurs 
+(
+Nom_Inventeur VARCHAR(100) PRIMARY KEY, 
+Nom_Recette VARCHAR(100)
+);
+
+CREATE TABLE Clients
+(
+N_Client INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Client VARCHAR(100), 
+Prenom_Client VARCHAR(100), 
+Adresse_Client VARCHAR(100),  
+Telephone_Client INT(10)
+);
+
+CREATE TABLE Fournisseurs 
+(
+ID_Fournisseur INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Fournisseur VARCHAR(100),  
+Telephone_Fournisseur INT(10)
+);
+
+CREATE TABLE Nouvelles_Recettes 
+(
+ID_Recette INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Nom_Recette VARCHAR(100), 
+Type_Recette VARCHAR(10), 
+Ingredient_Recette VARCHAR(100), 
+Prix_Ingredient_Recette INT NOT NULL DEFAULT '0', 
+Seuil INT, 
+Quantite_Recette INT, 
+Diluant VARCHAR(100), 
+Prix_Diluant INT NOT NULL DEFAULT '0', 
+Temperature INT,
+Prix_Total_Produit INT NOT NULL DEFAULT '0', 
+Nom_Inventeur VARCHAR(100)
+);
+
+CREATE TABLE Commandes 
+(ID_Commande INT PRIMARY KEY NOT NULL AUTO_INCREMENT, 
+Date_Commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+Produit_Commande VARCHAR (100), 
+Recipient_Commande VARCHAR (100), 
+Nb_Exemplaires_Commande INT, 
+Prix_Produit INT NOT NULL DEFAULT '0', 
+Etat_Commande VARCHAR (20), 
+N_Client INT NOT NULL
+);
+
+
+
+
+CREATE TABLE Recettes_Potions
+(
+ID_Potion INT NOT NULL, 
+Nom_Inventeur VARCHAR (100), 
+Nom_Potion VARCHAR (100), 
+Ingredient_Recette VARCHAR (100), 
+Prix_Ingredient_Recette INT NOT NULL DEFAULT '0', 
+Seuil INT, 
+Quantite INT, 
+Diluant VARCHAR (100), 
+Prix_Diluant INT NOT NULL DEFAULT '0', 
+Temperature INT, 
+Prix_Total_Produit INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Recettes_Onguents
+(
+ID_Onguent INT NOT NULL, 
+Nom_Inventeur VARCHAR (100), 
+Nom_Onguent VARCHAR (100), 
+Ingredient_Recette VARCHAR (100), 
+Prix_Ingredient_Recette INT NOT NULL DEFAULT '0', 
+Seuil INT, 
+Quantite INT, 
+Prix_Total_Produit INT NOT NULL DEFAULT '0'
+);
+
+CREATE TABLE Stock_Ingredients 
+(
+ID_Ingredient INT NOT NULL,
+ID_Fournisseur INT NOT NULL,
+Nom_Ingredient VARCHAR (100), 
+Prix_Ingredient INT NOT NULL DEFAULT '0', 
+Quantite_Stock INT, 
+Fraicheur INT
+);
+
+
+CREATE TABLE Stock_Recipients
+(
+ID_Recipient INT NOT NULL, 
+Nom_Recipient VARCHAR (100), 
+Prix_Recipient INT NOT NULL DEFAULT '0', 
+Nombre_En_Stock INT
+);
+
+ALTER TABLE Potions
+ADD FOREIGN KEY (Nom_Potion) REFERENCES Recettes_Potions(Nom_Potion)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Onguents
+ADD FOREIGN KEY (Nom_Onguent) REFERENCES Recettes_Onguents(Nom_Onguent)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Ingredients
+ADD FOREIGN KEY (Nom_Ingredient) REFERENCES Stock_Ingredients(Nom_Ingredient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Recipients
+ADD FOREIGN KEY (Nom_Recipient) REFERENCES Stock_Recipients(Nom_Recipient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Inventeurs
+ADD FOREIGN KEY (Nom_Recette) REFERENCES Nouvelles_Recettes(Nom_Recette)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Nouvelles_Recettes
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Commandes
+ADD FOREIGN KEY (N_Client) REFERENCES Clients(N_Client)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+
+ALTER TABLE Recettes_Potions
+ADD FOREIGN KEY (ID_Potion) REFERENCES Potions(ID_Potion)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Recettes_Potions
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Recettes_Potions
+ADD CONSTRAINT Pk_Recettes_Potions PRIMARY KEY (ID_Potion, Nom_Inventeur);
+
+ALTER TABLE Recettes_Onguents
+ADD FOREIGN KEY (ID_Onguent) REFERENCES Onguents(ID_Onguent)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Recettes_Onguents
+ADD FOREIGN KEY (Nom_Inventeur) REFERENCES Inventeurs(Nom_Inventeur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Recettes_Onguents
+ADD CONSTRAINT Pk_Recettes_Onguents PRIMARY KEY (ID_Onguent, Nom_Inventeur);
+
+ALTER TABLE Stock_Ingredients
+ADD FOREIGN KEY (ID_Ingredient) REFERENCES Ingredients(ID_Ingredient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Stock_Ingredients
+ADD FOREIGN KEY (ID_Fournisseur) REFERENCES Fournisseurs(ID_Fournisseur)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Stock_Ingredients
+ADD CONSTRAINT Pk_Stock_Ingredients PRIMARY KEY (ID_Ingredient, ID_Fournisseur);
+
+ALTER TABLE Stock_Recipients
+ADD FOREIGN KEY (ID_Recipient) REFERENCES Recipients(ID_Recipient)
+	ON DELETE CASCADE
+
+	ON UPDATE CASCADE;
+ALTER TABLE Stock_Recipients
+ADD CONSTRAINT Pk_ID_Recipient PRIMARY KEY (ID_Recipient);
+
+
+
+
+
+
+
+
+/*Compte utilisateur Giselle (Accès à toutes les tables de la base "ProjetBDD" avec droits de création, mise à jour et consultation uniquement. La suppresson n'est pas autorisée sur ce compte)*/
+
+GRANT CREATE,
+CREATE TEMPORARY TABLES,
+CREATE VIEW,
+ALTER,
+SELECT,
+UPDATE,
+INSERT,
+CREATE ROUTINE,
+ALTER ROUTINE,
+EXECUTE,
+INDEX,
+TRIGGER,
+GRANT OPTION
+ON projetbdd.* 
+TO 'Giselle'@'localhost' IDENTIFIED BY 'quatrezero';
+
+GRANT CREATE USER
+ON *.* 
+TO 'Giselle'@'localhost';
+
+
+
+
+
+
+/*Compte utilisateur Miguel (possède les mêmes droits que le compte Giselle)*/
+
+GRANT CREATE,
+CREATE TEMPORARY TABLES,
+CREATE VIEW,
+ALTER,
+SELECT,
+UPDATE,
+INSERT,
+CREATE ROUTINE,
+ALTER ROUTINE,
+EXECUTE,
+INDEX,
+TRIGGER,
+GRANT OPTION
+ON projetbdd.* 
+TO 'Miguel'@'localhost' IDENTIFIED BY '1111';
+
+GRANT CREATE USER
+ON *.* 
+TO 'Miguel'@'localhost';
+
+
+
+
+
+
+/*Compte utilisateur client(il ne peut que consulter les tables de vente et exécuter des procédures de de sélection stockées dans la bdd)*/
+
+GRANT SELECT
+ON projetbdd.potions
+TO 'Client'@'localhost' IDENTIFIED BY 'motdepasse';
+
+GRANT SELECT
+ON projetbdd.onguents
+TO 'Client'@'localhost';
+
+GRANT SELECT
+ON projetbdd.recipients
+TO 'Client'@'localhost';
+
+GRANT SELECT
+ON projetbdd.ingredients
+TO 'Client'@'localhost';
+
+GRANT EXECUTE
+ON projetbdd.*
+TO 'Client'@'localhost';
+
+GRANT INSERT, SELECT
+ON projetbdd.nouvelles_recettes
+TO 'Client'@'localhost';
+
+GRANT CREATE USER, GRANT OPTION
+ON *.* 
+TO 'Client'@'localhost';
+
+
+
+
+
+
+-- Les triggers, requêtes et précédures stockées demandées, avec leurs fonctions d'appel
+
+
+-- Affichage du stock des ingrédients et mise à jour à la réception de nouveaux ingrédients
+
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Afficher_Stock $$
+CREATE TRIGGER Afficher_Stock
+AFTER INSERT ON ingredients
+ FOR EACH ROW
+BEGIN
+CALL Afficher_Stock_Ingredients();
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Afficher_Stock_Ingredients$$
+CREATE PROCEDURE Afficher_Stock_Ingredients()
+    BEGIN 
+
+INSERT INTO stock_ingredients SELECT * FROM stock_ingredients ORDER BY ID_Ingredient DESC LIMIT 1;
+
+    END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+-- Consultation des commandes d’un client
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Consultation_Commandes $$
+CREATE PROCEDURE Consultation_Commandes (IN NClient INT)
+    BEGIN 
+
+DROP TABLE IF EXISTS commandes_temp;
+CREATE TABLE commandes_temp AS SELECT * FROM Commandes WHERE N_Client = NClient;
+DROP VIEW IF EXISTS Consultation_Commandes;
+CREATE VIEW Consultation_Commandes AS
+SELECT * FROM commandes_temp;
+    END$$
+DELIMITER ;
+
+CALL Consultation_Commandes(/*Ajoutez le n° du client */);
+
+
+
+
+
+
+
+
+
+
+-- Suppression d’un ingrédient arrivé à expiration (pourra être éventuellement automatisé)
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Supprimer_Ingredient_Perime $$
+CREATE TRIGGER Supprimer_Ingredient_Perime
+AFTER UPDATE ON ingredients
+ FOR EACH ROW
+BEGIN
+CALL Peremption_Ingredient ();
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Peremption_Ingredient $$
+CREATE PROCEDURE Peremption_Ingredient ()
+    BEGIN 
+
+DELETE FROM ingredients WHERE Fraicheur > Seuil;
+
+    END$$
+DELIMITER ;
+
+
+
+
+
+
+
+
+-- Mise à jour du stock après envoi d’une commande (la commande devra changer de statut)
+
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Envoi_Commande $$
+CREATE TRIGGER Envoi_Commande
+AFTER UPDATE ON commandes
+ FOR EACH ROW
+BEGIN
+CALL Update_Stock ();
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Update_Stock $$
+CREATE PROCEDURE Update_Stock ()
+    BEGIN 
+
+SELECT Produit_Commande AS produit FROM commandes WHERE `Etat_Commande` = "Envoyé";
+SELECT Quantite AS qte FROM recettes_potions WHERE  `Nom_Produit` = produit;
+SELECT Quantite AS qte2 FROM recettes_onguents WHERE  `Nom_Produit` = produit;
+UPDATE stock_ingredients SET Quantite_Stock = Quantite_Stock - qte WHERE `Nom_Produit` = produit;
+UPDATE stock_ingredients SET Quantite_Stock = Quantite_Stock - qte2 WHERE `Nom_Produit` = produit;
+
+    END$$
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+-- Ajouter une ou plusieurs nouvelles recettes
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Ajout_Nouvelle_Recette $$
+CREATE PROCEDURE Ajout_Nouvelle_Recette (IN Nom VARCHAR(100), IN Type VARCHAR(100), IN Ingredient VARCHAR(100), IN Prix INT, IN Seuil INT, IN Quantite INT, IN Diluant VARCHAR(100), IN PrixDiluant INT, IN Temp INT, IN Total INT, IN idI INT, IN Inventeur VARCHAR(100))
+    BEGIN 
+
+INSERT INTO nouvelles_recettes (Nom_Recette, Type_Recette, Ingredient_Recette, Prix_Ingredient_Recette, Seuil, Quantite, Diluant, Prix_Diluant, Temperature, Prix_Total_Produit, Nom_Inventeur) VALUES ( Nom, Type, Ingredient, Prix, Seuil, Quantite, Diluant, PrixDiluant, Temp, Total, Inventeur);
+
+INSERT IGNORE INTO inventeurs (ID_Inventeur, Nom_Inventeur) VALUES (idI, Inventeur);
+
+END$$
+
+DELIMITER ;
+
+CALL Ajout_Nouvelle_Recette(/*Ajoutez les paramètres de la recette : Nom, Type, Ingredient, Prix, Seuil, Quantite, Diluant, PrixDiluant, Temp, Total, Nom Inventeur : */);
+
+
+
+
+
+
+
+
+
+
+-- Valider une recette qui a été acceptée
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Ajout_Aux_Tables $$
+CREATE PROCEDURE Ajout_Aux_Tables (IN ID INT)
+    BEGIN 
+
+INSERT INTO recettes_potions (SELECT * FROM nouvelles_recettes WHERE `ID_Recette` = ID AND `Type_Recette` = "Potions");
+INSERT INTO recettes_onguents (SELECT * FROM nouvelles_recettes WHERE `ID_Recette` = ID AND `Type_Recette` = "Onguents");
+
+DELETE FROM nouvelles_recettes WHERE `ID_Recette` = ID;
+
+    END$$
+DELIMITER ;
+
+CALL Ajout_Aux_Tables (/*Ajoutez le n° de la recette*/);
+
+
+
+
+
+
+
+-- Supprimer une recette non validée
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Suppression_Recette_Invalide $$
+CREATE PROCEDURE Suppression_Recette_Invalide (IN ID INT)
+    BEGIN 
+
+DELETE FROM nouvelles_recettes WHERE `ID_Recette` = ID;
+
+    END$$
+DELIMITER ;
+CALL Suppression_Recette_Invalide (/*Ajoutez le n° de la recette à supprimer :*/);
+
+
+
+
+
+
+
+
+-- Recherche des potions ou les onguents réalisables avec un ingrédient précis
+
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Recherche_Recette_Ingredient_Precis$$
+CREATE PROCEDURE Recherche_Recette_Ingredient_Precis (IN Ingredient VARCHAR(100))
+    BEGIN 
+
+SELECT * FROM recettes_potions WHERE `Ingredient_Recette` = Ingredient;
+SELECT * FROM recettes_onguents WHERE `Ingredient_Recette` = Ingredient;
+
+    END$$
+DELIMITER ;
+
+CALL Recherche_Recette_Ingredient_Precis (/*Ajoutez le nom de l’ingrédient */);
+
+
+
+
+
+
+
+
+
+-- Recherche des couples (potions, onguents) utilisant la même liste d’ingrédients
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Recherche_Couples_Ingredient_Precis$$
+CREATE PROCEDURE Recherche_Couples_Ingredient_Precis (IN Ingredient VARCHAR(100))
+    BEGIN 
+
+SELECT Nom_Potion, Nom_Onguent FROM recettes_potions INNER JOIN recettes_onguents WHERE `Ingredient_Recette` = Ingredient;
+
+    END$$
+DELIMITER ;
+
+CALL Recherche_Couples_Ingredient_Precis (/*Ajoutez le nom de l’ingrédient */);
+
+
+
+
+
+
+
+
+
+
+-- Recherche des potions réalisables avec un diluant précis
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Recherche_Recette_Diluant_Precis$$
+CREATE PROCEDURE Recherche_Recette_Diluant_Precis (IN Diluant VARCHAR(100))
+    BEGIN 
+
+SELECT * FROM recettes_potions WHERE `Diluant` = Diluant;
+
+    END$$
+DELIMITER ;
+
+CALL Recherche_Recette_Diluant_Precis (/*Ajoutez le nom du diluant*/);
+
+
+
+
+
+
+
+
+
+
+
+-- Liste des potions classée par température de préparation
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Liste_Potions_Par_Temperature$$
+CREATE PROCEDURE Liste_Potions_Par_Temperature ()
+    BEGIN 
+
+SELECT * FROM recettes_potions ORDER BY `Temperature` ASC;
+
+    END$$
+DELIMITER ;
+
+CALL Liste_Potions_Par_Temperature ();
+
+
+
+
+
+
+
+
+
+
+
+-- La comparaison entre le prix de vente d’une potion et le total du prix des ingrédients (et diluant) nécessaires à sa réalisation
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Comparaison_Des_Prix_Potion$$
+CREATE PROCEDURE Comparaison_Des_Prix_Potion (IN NomPotion VARCHAR(100))
+    BEGIN 
+
+SELECT * FROM potions INNER JOIN recettes_potions WHERE `Nom_Potion` = NomPotion;
+
+    END$$
+DELIMITER ;
+
+CALL Comparaison_Des_Prix_Potion (/*Ajoutez le nom de la potion*/);
+
+
+
+
+
+
+
+
+
+
+
+
+-- Le nombre moyen d’ingrédients utilisés pour fabriquer une potion (ou onguent)
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Moyenne_Ingredients$$
+CREATE PROCEDURE Moyenne_Ingredients () 
+BEGIN 
+
+SELECT Nom_Potion, Ingredient_Recette, SUM(Quantite)AS qte_pot FROM recettes_potions GROUP BY Nom_Potion;
+SELECT Nom_Onguent, Ingredient_Recette, SUM(Quantite) AS qte_ong FROM recettes_onguents GROUP BY Nom_Onguent;
+SELECT COUNT(Nom_Potion) AS compte_pot, COUNT(Nom_Onguent) AS compte_ong, (qte_pot + qte_ong / compte_pot + compte_ong); 
+
+END$$
+
+DELIMITER ;
+
+CALL Moyenne_Ingredients() ;
+
+
+
+
+
+
+
+
+
+
+-- Réaliser une commande pour le client
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Realiser_Commande$$
+CREATE PROCEDURE Realiser_Commande (IN NomProduit VARCHAR(100), IN NomRecipient VARCHAR(100), IN Nb_Exemplaires INT, IN NClient INT)
+    BEGIN 
+
+DROP TABLE IF EXISTS commandes_temp;
+CREATE TABLE commandes_temp LIKE commandes;
+
+INSERT INTO commandes_temp (`Produit_Commande`,`Recipient_Commande`,`Nb_Exemplaires_Commande`,`N_Client`) VALUES (NomProduit, NomRecipient, Nb_Exemplaires, NClient);
+
+SELECT Prix_Potion AS prix_potion FROM potions WHERE `Nom_Potion` = NomProduit;
+SELECT Prix_Onguent AS prix_onguent FROM onguents WHERE `Nom_Onguent` = NomProduit;
+
+INSERT INTO commandes_temp (`Prix_Produit`) VALUE (prix_potion);
+INSERT INTO commandes_temp (`Prix_Produit`) VALUE (prix_onguent);
+
+SELECT Prix_Recipient AS prix_recip FROM Recipients WHERE `Nom_Recipent` = NomRecipient;
+UPDATE commande_temp SET Prix_Produit = Prix_Produit + prix_recip +( prix_recip*10/100) * Nb_Exemplaires ;
+
+
+DROP VIEW IF EXISTS Commande;
+CREATE VIEW Commande AS
+SELECT * FROM commandes_temp;
+DROP TABLE commandes_temp;
+
+
+    END$$
+DELIMITER ;
+
+CALL Realiser_Commande (/*Ajoutez le nom du produit voulu, celui du récipient, le nombre d’exemplaires du récipient et votre ID*/);
+
+
+
+
+
+
+
+
+
+
+
+-- Calcul automatique du prix de fabrication et de vente d’une potion
+
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Calcul_Potion $$
+CREATE TRIGGER Calcul_Potion
+AFTER INSERT ON recettes_potions
+ FOR EACH ROW
+BEGIN
+
+CALL Calcul_Prix_pot();
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Calcul_Prix_pot$$
+CREATE PROCEDURE Calcul_Prix_pot()
+    BEGIN 
+    
+SELECT ID_Potion AS ID, Prix_Ingredient_Recette AS prix_ingredient, Prix_Diluant AS prix_diluant, Prix_Total_Produit AS total FROM recettes_potions ORDER BY ID LIMIT 1;
+UPDATE recettes_potions SET total = SUM(prix_ingredient) + prix_diluant;
+
+SELECT ID_Potion FROM Potions WHERE `ID_Potion` = ID;
+UPDATE Potions SET Prix_Potion = total+(total * 20/100);
+
+    END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+-- Calcul automatique du prix de fabrication et de vente d’un onguent
+
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Calcul_Onguent $$
+CREATE TRIGGER Calcul_Onguent
+AFTER INSERT ON recettes_onguents
+ FOR EACH ROW
+BEGIN
+
+CALL Calcul_Prix_ong();
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Calcul_Prix_ong$$
+CREATE PROCEDURE Calcul_Prix_ong()
+    BEGIN 
+    
+SELECT ID_Onguent AS ID, Prix_Ingredient_Recette AS prix_ingredient, Prix_Total_Produit AS total FROM recettes_onguents ORDER BY ID LIMIT 1;
+UPDATE recettes_onguents SET total = SUM(prix_ingredient);
+
+SELECT ID_Onguent FROM Onguents WHERE `ID_Onguent` = ID;
+UPDATE Onguents SET Prix_Potion = total+(total * 20/100);
+
+    END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+-- Calcul du prix lors de la commande
+
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS Calcul_Commande $$
+CREATE TRIGGER Calcul_Commande
+AFTER INSERT ON commandes_temp
+ FOR EACH ROW
+BEGIN
+
+CALL Calcul_Prix_Commande();
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS Calcul_Prix_Commande $$
+CREATE PROCEDURE Calcul_Prix_Commande ()
+    BEGIN 
+    
+SELECT ID_Onguent AS ID, Prix_Ingredient_Recette AS prix_ingredient, Prix_Total_Produit AS total FROM recettes_onguents ORDER BY ID LIMIT 1;
+UPDATE recettes_onguents SET total = SUM(prix_ingredient);
+
+SELECT ID_Onguent FROM Onguents WHERE `ID_Onguent` = ID;
+UPDATE Onguents SET Prix_Potion = total+(total * 20/100);
+
+    END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+

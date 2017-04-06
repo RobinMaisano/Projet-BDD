@@ -1,0 +1,76 @@
+/*Compte utilisateur Giselle (Accès à toutes les tables de la base "ProjetBDD" avec droits de création, mise à jour et consultation uniquement. La suppresson n'est pas autorisée sur ce compte)*/
+
+GRANT CREATE,
+CREATE TEMPORARY TABLES,
+CREATE VIEW,
+ALTER,
+SELECT,
+UPDATE,
+INSERT,
+CREATE ROUTINE,
+ALTER ROUTINE,
+EXECUTE,
+INDEX,
+TRIGGER,
+GRANT OPTION
+ON projetbdd.* 
+TO 'Giselle'@'localhost' IDENTIFIED BY 'quatrezero';
+
+GRANT CREATE USER
+ON *.* 
+TO 'Giselle'@'localhost';
+
+
+/*Compte utilisateur Miguel (possède les mêmes droits que le compte Giselle)*/
+
+GRANT CREATE,
+CREATE TEMPORARY TABLES,
+CREATE VIEW,
+ALTER,
+SELECT,
+UPDATE,
+INSERT,
+CREATE ROUTINE,
+ALTER ROUTINE,
+EXECUTE,
+INDEX,
+TRIGGER,
+GRANT OPTION
+ON projetbdd.* 
+TO 'Miguel'@'localhost' IDENTIFIED BY '1111';
+
+GRANT CREATE USER
+ON *.* 
+TO 'Miguel'@'localhost';
+
+
+
+/*Compte utilisateur client(il ne peut que consulter les tables de vente et exécuter des procédures de de sélection stockées dans la bdd)*/
+
+GRANT SELECT
+ON projetbdd.potions
+TO 'Client'@'localhost' IDENTIFIED BY 'motdepasse';
+
+GRANT SELECT
+ON projetbdd.onguents
+TO 'Client'@'localhost';
+
+GRANT SELECT
+ON projetbdd.recipients
+TO 'Client'@'localhost';
+
+GRANT SELECT
+ON projetbdd.ingredients
+TO 'Client'@'localhost';
+
+GRANT EXECUTE
+ON projetbdd.*
+TO 'Client'@'localhost';
+
+GRANT INSERT, SELECT
+ON projetbdd.nouvelles_recettes
+TO 'Client'@'localhost';
+
+GRANT CREATE USER, GRANT OPTION
+ON *.* 
+TO 'Client'@'localhost';
